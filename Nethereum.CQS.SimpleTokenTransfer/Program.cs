@@ -113,7 +113,15 @@ namespace Nethereum.CQS.SimpleTokenTransfer
                 TokenAmount = 100
             };
 
+            
+
             var transferHandler = web3.Eth.GetContractTransactionHandler<TransferFunction>();
+
+            /// this is done automatically so is not needed.
+            var estimate = await transferHandler.EstimateGasAsync(transactionMessage, ContractAddress);
+            transactionMessage.Gas = estimate.Value;
+
+
             var transactionHash = await transferHandler.SendRequestAsync(transactionMessage, ContractAddress);
             Console.WriteLine(transactionHash);
 
