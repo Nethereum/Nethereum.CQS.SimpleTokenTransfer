@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,13 +10,18 @@ using Nethereum.Contracts.CQS;
 using Nethereum.Util;
 using Nethereum.Web3.Accounts;
 
-namespace Nethereum.CQS.SimpleTokenTransfer
+namespace Nethereum.CQS.SimpleTokenTransfer.Net451
 {
+
     public class Program
     {
-        
+
         static void Main(string[] args)
         {
+            //To connect to infura using .net451 and TSL2 you need to set it in advance
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            // The rest is the same as other versions of the framework
+
             Console.WriteLine("Deploying the contract");
             // Remove comment to deploy a new contract
             //DeployStandardTokenAsync().Wait();
@@ -47,7 +54,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer
         //The Deployment of the Standard Token smart contract
         public static async Task DeployStandardTokenAsync()
         {
-            
+
             //Your account address
             var senderAddress = "0x12890d2cce102216644c59daE5baed380d84830c";
 
@@ -63,7 +70,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer
                 TotalSupply = 100000,
                 FromAddress = senderAddress
             };
-           
+
             var web3 = new Web3.Web3(new Account(privatekey), url);
 
             var deploymentHandler = web3.Eth.GetContractDeploymentHandler<StandardTokenDeployment>();
@@ -74,7 +81,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer
             Console.WriteLine("Contract deployed to address: " + ContractAddress);
         }
 
-      
+
 
 
         public static async Task BalanceAsync()
@@ -116,7 +123,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer
             var privatekey = "0xb5b1870957d373ef0eeffecc6e4812c0fd08f554b37b233526acc331bf1544f7";
             var url = "https://rinkeby.infura.io/";
 
-            var web3 =  new Web3.Web3(new Account(privatekey), url);
+            var web3 = new Web3.Web3(new Account(privatekey), url);
 
             var transactionMessage = new TransferFunction()
             {
@@ -124,11 +131,11 @@ namespace Nethereum.CQS.SimpleTokenTransfer
                 To = receiverAddress,
                 TokenAmount = 100,
                 //Set our own price
-                GasPrice =  Web3.Web3.Convert.ToWei(25, UnitConversion.EthUnit.Gwei)
-                
+                GasPrice = Web3.Web3.Convert.ToWei(25, UnitConversion.EthUnit.Gwei)
+
             };
 
-            
+
 
             var transferHandler = web3.Eth.GetContractTransactionHandler<TransferFunction>();
 
