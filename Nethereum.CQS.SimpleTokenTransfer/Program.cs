@@ -7,6 +7,8 @@ using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts.CQS;
 using Nethereum.Util;
 using Nethereum.Web3.Accounts;
+using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Contracts;
 
 namespace Nethereum.CQS.SimpleTokenTransfer
 {
@@ -15,9 +17,10 @@ namespace Nethereum.CQS.SimpleTokenTransfer
         
         static void Main(string[] args)
         {
+
             Console.WriteLine("Deploying the contract");
-            // Remove comment to deploy a new contract
-            //DeployStandardTokenAsync().Wait();
+            //Remove comment to deploy a new contract
+            DeployStandardTokenAsync().Wait();
             Console.ReadLine();
             Console.WriteLine("Checking the balance");
             BalanceAsync().Wait();
@@ -55,7 +58,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer
             var privatekey = "0xb5b1870957d373ef0eeffecc6e4812c0fd08f554b37b233526acc331bf1544f7";
 
             //The url to the Rinkeby testchain in infura
-            var url = "https://rinkeby.infura.io/";
+            var url = "https://ropsten.infura.io/";
 
             //The smart contract deployment message, as described above, including the "Total Supply" of the Standard Token
             var deploymentMessage = new StandardTokenDeployment
@@ -64,8 +67,10 @@ namespace Nethereum.CQS.SimpleTokenTransfer
                 FromAddress = senderAddress
             };
            
+            //Creating a new instance of Web3 to connect to Ethereum, including a new account configured with our private key to sign transactions
             var web3 = new Web3.Web3(new Account(privatekey), url);
 
+            //Deploying using a new handler
             var deploymentHandler = web3.Eth.GetContractDeploymentHandler<StandardTokenDeployment>();
             var transactionReceipt = await deploymentHandler.SendRequestAndWaitForReceiptAsync(deploymentMessage);
 
@@ -82,8 +87,9 @@ namespace Nethereum.CQS.SimpleTokenTransfer
             //Replace with your own
             var senderAddress = "0x12890d2cce102216644c59daE5baed380d84830c";
             var contractAddress = ContractAddress;
-            var url = "https://rinkeby.infura.io/";
-            //no private key we are not signing anything
+            var url = "https://ropsten.infura.io/";
+
+            //no private key we are not signing anything (read only mode)
             var web3 = new Web3.Web3(url);
 
             var balanceOfFunctionMessage = new BalanceOfFunction()
@@ -92,7 +98,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer
             };
 
             var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOfFunction>();
-            var balance = await balanceHandler.QueryAsync<BigInteger>(balanceOfFunctionMessage, contractAddress);
+            var balance = await balanceHandler.QueryAsync<BigInteger>(contractAddress, balanceOfFunctionMessage);
 
 
             Console.WriteLine("Balance of token: " + balance);
@@ -100,7 +106,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer
         }
 
         [Function("balanceOf", "uint256")]
-        public class BalanceOfFunction : ContractMessage
+        public class BalanceOfFunction : FunctionMessage
         {
 
             [Parameter("address", "_owner", 1)]
@@ -114,7 +120,8 @@ namespace Nethereum.CQS.SimpleTokenTransfer
             var senderAddress = "0x12890d2cce102216644c59daE5baed380d84830c";
             var receiverAddress = "0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe";
             var privatekey = "0xb5b1870957d373ef0eeffecc6e4812c0fd08f554b37b233526acc331bf1544f7";
-            var url = "https://rinkeby.infura.io/";
+            var url = "https://ropsten.infura.io/";
+
 
             var web3 =  new Web3.Web3(new Account(privatekey), url);
 
@@ -128,23 +135,21 @@ namespace Nethereum.CQS.SimpleTokenTransfer
                 
             };
 
-            
-
             var transferHandler = web3.Eth.GetContractTransactionHandler<TransferFunction>();
 
             /// this is done automatically so is not needed.
-            var estimate = await transferHandler.EstimateGasAsync(transactionMessage, ContractAddress);
+            var estimate = await transferHandler.EstimateGasAsync(ContractAddress, transactionMessage);
             transactionMessage.Gas = estimate.Value;
 
 
-            var transactionHash = await transferHandler.SendRequestAsync(transactionMessage, ContractAddress);
+            var transactionHash = await transferHandler.SendRequestAsync(ContractAddress, transactionMessage);
             Console.WriteLine(transactionHash);
 
         }
 
 
         [Function("transfer", "bool")]
-        public class TransferFunction : ContractMessage
+        public class TransferFunction : FunctionMessage
         {
             [Parameter("address", "_to", 1)]
             public string To { get; set; }

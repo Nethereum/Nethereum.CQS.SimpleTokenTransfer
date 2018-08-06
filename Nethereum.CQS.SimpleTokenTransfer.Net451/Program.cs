@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.Contracts;
 using Nethereum.Contracts.CQS;
 using Nethereum.Util;
 using Nethereum.Web3.Accounts;
@@ -18,8 +19,8 @@ namespace Nethereum.CQS.SimpleTokenTransfer.Net451
 
         static void Main(string[] args)
         {
-            //To connect to infura using .net451 and TSL2 you need to set it in advance
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            //To connect to infura using .net451 and TLS2 you need to set it in advance
+            // ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             // The rest is the same as other versions of the framework
 
             Console.WriteLine("Deploying the contract");
@@ -99,7 +100,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer.Net451
             };
 
             var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOfFunction>();
-            var balance = await balanceHandler.QueryAsync<BigInteger>(balanceOfFunctionMessage, contractAddress);
+            var balance = await balanceHandler.QueryAsync<BigInteger>(contractAddress, balanceOfFunctionMessage);
 
 
             Console.WriteLine("Balance of token: " + balance);
@@ -107,7 +108,7 @@ namespace Nethereum.CQS.SimpleTokenTransfer.Net451
         }
 
         [Function("balanceOf", "uint256")]
-        public class BalanceOfFunction : ContractMessage
+        public class BalanceOfFunction : FunctionMessage
         {
 
             [Parameter("address", "_owner", 1)]
@@ -140,18 +141,18 @@ namespace Nethereum.CQS.SimpleTokenTransfer.Net451
             var transferHandler = web3.Eth.GetContractTransactionHandler<TransferFunction>();
 
             /// this is done automatically so is not needed.
-            var estimate = await transferHandler.EstimateGasAsync(transactionMessage, ContractAddress);
+            var estimate = await transferHandler.EstimateGasAsync(ContractAddress, transactionMessage);
             transactionMessage.Gas = estimate.Value;
 
 
-            var transactionHash = await transferHandler.SendRequestAsync(transactionMessage, ContractAddress);
+            var transactionHash = await transferHandler.SendRequestAsync(ContractAddress, transactionMessage);
             Console.WriteLine(transactionHash);
 
         }
 
 
         [Function("transfer", "bool")]
-        public class TransferFunction : ContractMessage
+        public class TransferFunction : FunctionMessage
         {
             [Parameter("address", "_to", 1)]
             public string To { get; set; }
