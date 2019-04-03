@@ -61,9 +61,11 @@ namespace Nethereum.CQS.SimpleTokenTransfer.Net451
 
             //The private key corresponding to your address used to sign the transactions.
             var privatekey = "0xb5b1870957d373ef0eeffecc6e4812c0fd08f554b37b233526acc331bf1544f7";
-
             //The url to the Rinkeby testchain in infura
-            var url = "https://rinkeby.infura.io/";
+            // Note: in this sample, a special INFURA API key is used: `7238211010344719ad14a89db874158c`. If you wish to use this sample in your own project you’ll need to [sign up on INFURA](https://infura.io/register) and use your own key.
+            var url = "https://
+rinkeby.infura.io/v3/7238211010344719ad14a89db874158c
+";
 
             //The smart contract deployment message, as described above, including the "Total Supply" of the Standard Token
             var deploymentMessage = new StandardTokenDeployment
@@ -90,7 +92,9 @@ namespace Nethereum.CQS.SimpleTokenTransfer.Net451
             //Replace with your own
             var senderAddress = "0x12890d2cce102216644c59daE5baed380d84830c";
             var contractAddress = ContractAddress;
-            var url = "https://rinkeby.infura.io/";
+
+        // Note: in this sample, a special INFURA API key is used: `7238211010344719ad14a89db874158c`. If you wish to use this sample in your own project you’ll need to [sign up on INFURA](https://infura.io/register) and use your own key.
+            var url = "https://rinkeby.infura.io/v3/7238211010344719ad14a89db874158c";
             //no private key we are not signing anything
             var web3 = new Web3.Web3(url);
 
@@ -122,7 +126,8 @@ namespace Nethereum.CQS.SimpleTokenTransfer.Net451
             var senderAddress = "0x12890d2cce102216644c59daE5baed380d84830c";
             var receiverAddress = "0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe";
             var privatekey = "0xb5b1870957d373ef0eeffecc6e4812c0fd08f554b37b233526acc331bf1544f7";
-            var url = "https://rinkeby.infura.io/";
+            // Note: in this sample, a special INFURA API key is used: `7238211010344719ad14a89db874158c`. If you wish to use this sample in your own project you’ll need to [sign up on INFURA](https://infura.io/register) and use your own key.
+            var url = "https://rinkeby.infura.io/v3/7238211010344719ad14a89db874158c";
 
             var web3 = new Web3.Web3(new Account(privatekey), url);
 
