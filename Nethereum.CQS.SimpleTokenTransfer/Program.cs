@@ -19,7 +19,6 @@ namespace Nethereum.CQS.SimpleTokenTransfer
         {
 
             Console.WriteLine("Deploying the contract");
-            //Remove comment to deploy a new contract
             DeployStandardTokenAsync().Wait();
             Console.ReadLine();
             Console.WriteLine("Checking the balance");
